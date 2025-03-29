@@ -1,12 +1,15 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
-import { config } from "../config";
+import { config } from "./config";
 import { userRouter } from "./user/user.route";
 import "@total-typescript/ts-reset";
 import client from "prom-client";
+import http from 'node:http';
+import { registerGraphQLServer } from "./graphql-server";
 
 const app = express();
+const httpServer = http.createServer(app);
 
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics();
@@ -35,15 +38,23 @@ app.get("/ping", (_req: Request, res: Response) => {
 	res.send("pong");
 });
 
-app.use(userRouter);
-
-app.use((_, res) => {
-	res.status(404).send("Not found");
+app.get("/health", (_req: Request, res: Response) => {
+	res.send("ok");
 });
 
+app.use(userRouter);
+
 if (!config.isTestEnvironment) {
-	app.listen(config.port);
-	console.info("App is listening on port:", config.port);
+	(async () => {
+		await registerGraphQLServer(app, httpServer);
+		app.use((_, res) => {
+			res.status(404).send("Not found");
+		});
+		// app.listen(config.port);
+		await new Promise<void>(resolve => httpServer.listen({ port: config.port }, resolve));
+		console.log(`🚀 Server ready at http://localhost:${config.port}/graphql`);
+		console.info("🚀 Express App is listening on port:", config.port);
+	})();
 }
 
 export { app };

@@ -19,4 +19,14 @@ model User {
   name    String?
   email   String   @unique
   Profile Profile?
+  posts   Post[]
+}
+
+model Post {
+  id        Int      @default(autoincrement()) @id
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  authorId  Int
+  author    User     @relation(fields: [authorId], references: [id])
 }

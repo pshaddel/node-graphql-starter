@@ -1,4 +1,3 @@
-
 interface IConfig {
 	port: number;
 	isProduction: boolean;
