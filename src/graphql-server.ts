@@ -5,7 +5,7 @@ import type { Application } from 'express';
 import { typeDefs, type User, type UserCreateInput } from './schema';
 import type { Server } from 'node:http';
 
-const posts = [
+const dbPosts = [
     {
         id: 1,
         title: "Post 1",
@@ -175,11 +175,10 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
 		token?: string;
 	}
 
-	const gqlServer = new ApolloServer<MyContext>({
-		typeDefs,
-		resolvers: {
-			Query: {
-				hello: () => "Hello world!",
+    const gqlServer = new ApolloServer<MyContext>({
+        typeDefs,
+        resolvers: {
+            Query: {
                 users: (_, { size, page }) => {
                     if (size > 10) size = 10;
                     if (page < 1) page = 1;
@@ -187,11 +186,18 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
                     const end = start + size;
                     console.log('usersFunc executed'); return dbUsers.slice(start, end);
                 },
-                posts: () => { console.log('postsFunc executed'); return posts },
+                posts: (_, { page, size }) => {
+                    console.log('postsFunc executed');
+                    if (size > 10) size = 10;
+                    if (page < 1) page = 1;
+                    const start = (page - 1) * size;
+                    const end = start + size;
+                    return dbPosts.slice(start, end);
+                },
                 comments: () => { console.log('commentsFunc executed'); return comments },
                 user: (_, { id }) => { console.log('singleUserFetched executed'); return dbUsers.find(user => user.id === id) },
-                post: (_, { id }) => { console.log('singlePostFetched executed'); return posts.find(post => post.id === id) },
-			},
+                post: (_, { id }) => { console.log('singlePostFetched executed'); return dbPosts.find(post => post.id === id) },
+            },
             Mutation: {
                 createUser: (_, { user }: { user: UserCreateInput }) => {
                     console.log('createUser executed');
@@ -208,7 +214,7 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
             User: {
                 posts: (parent) => {
                     console.log('userPosts executed');
-                    return posts.filter(post => post.userId === parent.id);
+                    return dbPosts.filter(post => post.userId === parent.id);
                 },
                 comments: (parent) => {
                     console.log('userComments executed');
@@ -232,7 +238,7 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
                 },
                 post: (parent) => {
                     console.log('commentPost executed');
-                    return posts.find(post => post.id === parent.postId);
+                    return dbPosts.find(post => post.id === parent.postId);
                 },
                 replyTo: (parent) => {
                     console.log('commentReplyTo executed');
@@ -240,7 +246,7 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
                 }
             }
 
-		},
+        },
 		plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 	});
 

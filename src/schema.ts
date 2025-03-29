@@ -1,4 +1,5 @@
 export const typeDefs = `
+
 type User {
 	id: ID!
 	name: String!
@@ -48,7 +49,6 @@ type Query {
 	users(size: Int = 10, page: Int = 1): [User]
 	posts: [Post]
 	comments: [Comment]
-	hello: String
 	user(id: ID!): User
 	post(id: ID!): Post
 }
