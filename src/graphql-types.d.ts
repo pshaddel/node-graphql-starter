@@ -74,6 +74,7 @@ export type QueryUsersArgs = {
 
 export enum Role {
   Admin = 'ADMIN',
+  SupportUser = 'SUPPORT_USER',
   User = 'USER'
 }
 
@@ -99,10 +100,7 @@ export type UserCreateInput = {
   role: Role;
 };
 
-
-
 export type ResolverTypeWrapper<T> = Promise<T> | T;
-
 
 export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>;

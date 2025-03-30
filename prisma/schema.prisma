@@ -7,26 +7,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id     Int     @default(autoincrement()) @id
-  bio    String?
-  userId Int     @unique
-  User   User    @relation(fields: [userId], references: [id])
-}
-
 model User {
-  id      Int      @default(autoincrement()) @id
-  name    String?
-  email   String   @unique
-  Profile Profile?
-  posts   Post[]
+  id          String    @id @default(cuid())
+  name        String
+  email       String    @unique
+  displayName String
+  avatar      String?
+  role        Role
+  posts       Post[]
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Post {
-  id        Int      @default(autoincrement()) @id
+  id        String    @id @default(cuid())
   title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
+  content   String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  comments  Comment[]
+}
+
+model Comment {
+  id       String    @id @default(cuid())
+  content  String
+  postId   String
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  post     Post      @relation(fields: [postId], references: [id])
+  replyTo  Comment?  @relation("ReplyTo", fields: [replyToId], references: [id])
+  replies  Comment[] @relation("ReplyTo")
+  replyToId String?
+}
+
+enum Role {
+  ADMIN
+  USER
+  SUPPORT_USER
 }

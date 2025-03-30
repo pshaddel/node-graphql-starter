@@ -2,7 +2,6 @@ import express, { type NextFunction, type Request, type Response } from "express
 import cors from "cors";
 import helmet from "helmet";
 import { config } from "./config";
-import { userRouter } from "./user/user.route";
 import "@total-typescript/ts-reset";
 import client from "prom-client";
 import http from 'node:http';
@@ -41,8 +40,6 @@ app.get("/ping", (_req: Request, res: Response) => {
 app.get("/health", (_req: Request, res: Response) => {
 	res.send("ok");
 });
-
-app.use(userRouter);
 
 if (!config.isTestEnvironment) {
 	(async () => {
