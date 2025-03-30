@@ -9,5 +9,22 @@
 		"indentWidth": 2,
 		"lineEnding": "lf",
 		"lineWidth": 80
+	},
+	"files": {
+		"ignore": [
+			"node_modules",
+			"dist",
+			"coverage",
+			"build",
+			"docs",
+			"*.js",
+			"src/graphql-types.d.ts"
+		],
+		"include": [
+			"src/**/*.ts",
+			"src/**/*.graphql",
+			"src/**/*.json",
+			"src/**/*.yml"
+		]
 	}
 }

@@ -1,5 +1,3 @@
-export const typeDefs = `
-
 type User {
 	id: ID!
 	name: String!
@@ -24,6 +22,7 @@ input UserCreateInput {
 enum Role {
 	ADMIN
 	USER
+	SUPPORT_USER
 }
 
 type Post {
@@ -56,46 +55,5 @@ type Query {
 type Mutation {
 	createUser(user: UserCreateInput!): User
 }
-`
 
-export type User = {
-	id: number;
-	name: string;
-	email: string;
-	displayName: string;
-	avatar?: string;
-	role: Role;
-	posts?: Post[];
-	comments?: Comment[];
-	createdAt: string;
-	updatedAt: string;
-}
 
-export type Post = {
-	id: number;
-	title: string;
-	content: string;
-	userId: number;
-	comments: Comment[];
-	user: User;
-}
-
-export type Comment = {
-	id: number;
-	content: string;
-	postId: number;
-	userId: number;
-	user: User;
-	post: Post;
-	replyTo: Comment;
-}
-
-export type UserCreateInput = {
-	name: string;
-	email: string;
-	displayName: string;
-	avatar?: string;
-	role: Role;
-}
-
-export type Role = "ADMIN" | "USER";

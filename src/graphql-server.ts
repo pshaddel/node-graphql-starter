@@ -2,8 +2,10 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import type { Application } from 'express';
-import { typeDefs, type User, type UserCreateInput } from './schema';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import type { Server } from 'node:http';
+import { Role, type User, type UserCreateInput } from './graphql-types';
 
 const dbPosts = [
     {
@@ -66,51 +68,51 @@ const dbPosts = [
 
 const dbUsers: User[] = [
     {
-        id: 1,
+        id: '1',
         name: "User 1",
         email: 'user1@example.com',
         displayName: "user_1",
         avatar: "https://example.com/user_1.jpg",
-        role: "ADMIN",
+        role: Role.Admin,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     },
     {
-        id: 2,
+        id: '2',
         name: "User 2",
         displayName: "user_2",
         avatar: "https://example.com/user_2.jpg",
-        role: "USER",
+        role: Role.User,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         email: 'user2@e.com'
     },
     {
-        id: 3,
+        id: '3',
         name: "User 3",
         displayName: "user_3",
         avatar: "https://example.com/user_3.jpg",
-        role: "USER",
+        role: Role.User,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         email: 'user3@e.com'
     },
     {
-        id: 4,
+        id: '4',
         name: "User 4",
         displayName: "user_4",
         avatar: "https://example.com/user_4.jpg",
-        role: "USER",
+        role: Role.User,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         email: 'user4@e.com'
     },
     {
-        id: 5,
+        id: '5',
         name: "User 5",
         displayName: "user_5",
         avatar: "https://example.com/user_5.jpg",
-        role: "USER",
+        role: Role.User,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         email: 'user5@e.com'
@@ -175,6 +177,9 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
 		token?: string;
 	}
 
+    // ./src/schema.graphql
+    const filePath = path.join(__dirname, 'schema.graphql');
+    const typeDefs = await readFile(filePath, 'utf-8');
     const gqlServer = new ApolloServer<MyContext>({
         typeDefs,
         resolvers: {
@@ -202,7 +207,7 @@ export async function registerGraphQLServer(app: Application, httpServer: Server
                 createUser: (_, { user }: { user: UserCreateInput }) => {
                     console.log('createUser executed');
                     const newUser: User = {
-                        id: dbUsers.length + 1,
+                        id: String(dbUsers.length + 1),
                         ...user,
                         createdAt: new Date().toISOString(),
                         updatedAt: new Date().toISOString(),

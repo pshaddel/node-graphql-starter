@@ -12,13 +12,15 @@
 		"test:ci": "npx prisma db push && jest --forceExit --detectOpenHandles --runInBand --silent",
 		"posttest": "docker compose -f docker-compose.test.yml down",
 		"prestart:dev": "docker compose up -d",
-		"start:dev": "tsc-watch --onSuccess 'node --env-file=.env ./dist/src/app.js'",
+		"start:dev": "tsc-watch --onSuccess 'copyfiles -u 1 src/schema.graphql dist/src && codegen && node --env-file=.env ./dist/src/app.js'",
 		"poststart:dev": "docker compose down",
 		"build": "tsc",
 		"lint": "biome lint",
 		"format": "biome format",
 		"prepare": "husky install",
-		"docs": "npx typedoc"
+		"docs": "npx typedoc",
+		"codegen": "graphql-codegen --config codegen.ts",
+		"update-graphql-schema": "copyfiles -u 1 src/schema.graphql dist/src && codegen"
 	},
 	"repository": {
 		"type": "git",
@@ -35,6 +37,7 @@
 		"@apollo/server": "^4.11.3",
 		"@graphql-tools/schema": "^10.0.23",
 		"@prisma/client": "^6.5.0",
+		"copyfiles": "^2.4.1",
 		"cors": "^2.8.5",
 		"express": "^5.0.1",
 		"graphql": "^16.10.0",
@@ -46,6 +49,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
+		"@graphql-codegen/cli": "5.0.5",
 		"@swc/core": "^1.11.13",
 		"@swc/jest": "^0.2.37",
 		"@total-typescript/ts-reset": "^0.6.1",
@@ -65,7 +69,10 @@
 		"ts-node": "^10.9.2",
 		"tsc-watch": "^6.2.1",
 		"typedoc": "^0.28.1",
-		"typedoc-plugin-markdown": "^4.6.0"
+		"typedoc-plugin-markdown": "^4.6.0",
+		"@graphql-codegen/typescript": "4.1.6",
+		"@graphql-codegen/typescript-resolvers": "4.5.0",
+		"@graphql-codegen/introspection": "4.0.3"
 	},
 	"engines": {
 		"node": ">=20.0.0"

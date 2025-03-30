@@ -47,6 +47,17 @@ The App is running inside a docker container, it supports hot reload.
 docker compose up
 ```
 
+## Updating GraphQL Schema and Its Corresponding Types
+
+If you change the GraphQL schema, you need to update the generated types. You can do that by running:
+
+```bash
+npm run update-graphql-schema
+```
+
+This will generate the types in the `src/graphql-types.d.ts` file.
+and also copy the schema to dist folder.
+
 Now the service is up and is listening on: `http://127.0.0.1:3001`
 
 Be aware that you need `DATABASE_URL` as a env variable on your system for running the project or tests. You can create a `.env` file in Prisma folder to do that.

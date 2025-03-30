@@ -9,11 +9,14 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install any needed packages specified in package.json
-RUN npm i --ignore-scripts
+RUN npm i
 RUN npm install -g tsc-watch
 # show the folder structure
 COPY . .
 RUN npx prisma generate --schema=./prisma/schema.prisma
+RUN npx copyfiles -u 1 src/schema.graphql dist/src
+RUN npm run codegen
+
 
 # Copy the rest of the application code to the working directory
 
