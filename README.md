@@ -52,7 +52,8 @@ docker compose up
 If you change the GraphQL schema, you need to update the generated types. You can do that by running:
 
 ```bash
-npm run update-graphql-schema
+npm run codegen
+npm run copyFile
 ```
 
 This will generate the types in the `src/graphql-types.d.ts` file.
